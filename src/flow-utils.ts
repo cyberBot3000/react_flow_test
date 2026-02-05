@@ -3,7 +3,7 @@ import type { Node } from './nodes.interfaces';
 
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 40;
-const HORIZONTAL_GAP = 70;
+const HORIZONTAL_GAP = 50;
 const VERTICAL_GAP = 20;
 const GROUP_PADDING = {
   top: 20,

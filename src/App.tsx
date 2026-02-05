@@ -31,7 +31,7 @@ function App() {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        //nodesDraggable={false}
+        nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={true}
         onNodesChange={onNodesChange}
