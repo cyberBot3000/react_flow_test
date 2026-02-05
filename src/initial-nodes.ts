@@ -2,7 +2,7 @@ import { type Node as FlowNode, type Edge, Position } from '@xyflow/react';
 
 export const nodes: FlowNode[] = [
   {
-    id: 'http-trigger',
+    id: 'f84ff063-da3e-42d2-8176-1eb3beec6d5b',
     type: 'default',
     data: {
       label: 'HTTP Trigger',
@@ -13,13 +13,14 @@ export const nodes: FlowNode[] = [
     },
     targetPosition: Position.Left,
     sourcePosition: Position.Right,
+    zIndex: 0,
     measured: {
       width: 150,
       height: 40,
     },
   },
   {
-    id: 'active-mq',
+    id: '6196b76b-58ba-4d3f-a34e-835c5c1723db',
     type: 'default',
     data: {
       label: 'Active MQ 6.X',
@@ -30,128 +31,202 @@ export const nodes: FlowNode[] = [
     },
     targetPosition: Position.Left,
     sourcePosition: Position.Right,
+    zIndex: 0,
     measured: {
       width: 150,
       height: 40,
     },
   },
   {
-    id: 'parallel',
+    id: 'b5c6f02f-0506-4bee-887d-6f42649c384e',
     type: 'default',
     data: {
       label: 'Parallel',
     },
     position: {
-      x: 470,
+      x: 500,
       y: 0,
     },
     targetPosition: Position.Left,
     sourcePosition: Position.Right,
+    zIndex: 1,
     measured: {
       width: 150,
       height: 40,
     },
-    selected: true,
-    dragging: false,
   },
   {
-    id: 'parallel-group',
-    data: {
-      label: '',
-    },
-    position: {
-      x: 540,
-      y: -40,
-    },
-    type: 'input',
-    sourcePosition: Position.Right,
-    style: {
-      backgroundColor: 'rgba(255, 0, 255, 0.2)',
-      height: 40 + 40 + 30*3,
-      width: 270,
-    },
-    measured: {
-      width: 540,
-      height: 120,
-    },
-    selected: false,
-    dragging: false,
-    width: 540,
-    height: 120,
-    resizing: false,
-  },
-  {
-    id: 'script',
+    id: 'e84ac89c-9fbc-4d5d-8a97-6968d8ff1592',
     type: 'default',
     data: {
       label: 'Script',
     },
     position: {
-      x: 170,
-      y: 11,
+      x: 715,
+      y: -110,
     },
     targetPosition: Position.Left,
     sourcePosition: Position.Right,
-    parentId: 'parallel-group',
+    parentId: 'b5c6f02f-0506-4bee-887d-6f42649c384e-group',
+    zIndex: 1,
     measured: {
       width: 150,
       height: 40,
     },
-    selected: false,
-    dragging: false,
   },
   {
-    id: 'smtp',
+    id: 'cf600a18-316a-4fdd-a067-29b73d2dfea9',
+    type: 'default',
+    data: {
+      label: 'Nested Parallel',
+    },
+    position: {
+      x: 965,
+      y: -110,
+    },
+    targetPosition: Position.Left,
+    sourcePosition: Position.Right,
+    parentId: 'b5c6f02f-0506-4bee-887d-6f42649c384e-group',
+    zIndex: 2,
+    measured: {
+      width: 150,
+      height: 40,
+    },
+  },
+  {
+    id: 'nested-1',
     type: 'default',
     data: {
       label: 'SMTP',
     },
     position: {
-      x: 350,
-      y: 11,
+      x: 1180,
+      y: -155,
     },
     targetPosition: Position.Left,
     sourcePosition: Position.Right,
-    parentId: 'parallel-group',
+    parentId: 'cf600a18-316a-4fdd-a067-29b73d2dfea9-group',
+    zIndex: 2,
     measured: {
       width: 150,
       height: 40,
     },
-    selected: false,
-    dragging: false,
   },
   {
-    id: 'sql',
+    id: 'nested-2',
+    type: 'default',
+    data: {
+      label: 'Logger',
+    },
+    position: {
+      x: 1430,
+      y: -155,
+    },
+    targetPosition: Position.Left,
+    sourcePosition: Position.Right,
+    parentId: 'cf600a18-316a-4fdd-a067-29b73d2dfea9-group',
+    zIndex: 2,
+    measured: {
+      width: 150,
+      height: 40,
+    },
+  },
+  {
+    id: 'nested-3',
+    type: 'default',
+    data: {
+      label: 'Cache',
+    },
+    position: {
+      x: 1180,
+      y: -65,
+    },
+    targetPosition: Position.Left,
+    sourcePosition: Position.Right,
+    parentId: 'cf600a18-316a-4fdd-a067-29b73d2dfea9-group',
+    zIndex: 2,
+    measured: {
+      width: 150,
+      height: 40,
+    },
+  },
+  {
+    id: 'cf600a18-316a-4fdd-a067-29b73d2dfea9-group',
+    zIndex: 1,
+    data: {
+      label: '',
+    },
+    position: {
+      x: 1040,
+      y: -175,
+    },
+    type: 'input',
+    sourcePosition: Position.Right,
+    parentId: 'b5c6f02f-0506-4bee-887d-6f42649c384e-group',
+    style: {
+      backgroundColor: 'rgba(255, 0, 255, 0.2)',
+      height: 170,
+      width: 590,
+    },
+    measured: {
+      width: 590,
+      height: 170,
+    },
+  },
+  {
+    id: '941c1e1c-a1fb-4cca-b271-2db2e6bd1eb5',
     type: 'default',
     data: {
       label: 'SQL',
     },
     position: {
-      x: 170,
-      y: 60,
+      x: 715,
+      y: 110,
     },
-    sourcePosition: Position.Right,
     targetPosition: Position.Left,
-    parentId: 'parallel-group',
+    sourcePosition: Position.Right,
+    parentId: 'b5c6f02f-0506-4bee-887d-6f42649c384e-group',
+    zIndex: 1,
     measured: {
       width: 150,
       height: 40,
     },
-    selected: false,
-    dragging: false,
   },
   {
-    id: 'http-sender',
+    id: 'b5c6f02f-0506-4bee-887d-6f42649c384e-group',
+    zIndex: 0,
+    data: {
+      label: '',
+    },
+    position: {
+      x: 575,
+      y: -130,
+    },
+    type: 'input',
+    sourcePosition: Position.Right,
+    style: {
+      backgroundColor: 'rgba(255, 0, 255, 0.2)',
+      height: 300,
+      width: 2070,
+    },
+    measured: {
+      width: 2070,
+      height: 300,
+    },
+  },
+  {
+    id: '4e913273-f09e-4ee4-81bf-9d5907236e00',
     type: 'default',
     data: {
       label: 'HTTP Sender',
     },
     position: {
-      x: 1120,
+      x: 2745,
       y: 0,
     },
     targetPosition: Position.Left,
     sourcePosition: Position.Right,
+    zIndex: 0,
     measured: {
       width: 150,
       height: 40,
@@ -161,33 +236,33 @@ export const nodes: FlowNode[] = [
 
 export const edges: Edge[] = [
   {
-    id: 'http-trigger-active-mq',
-    source: 'http-trigger',
-    target: 'active-mq',
+    id: 'f84ff063-da3e-42d2-8176-1eb3beec6d5b-6196b76b-58ba-4d3f-a34e-835c5c1723db',
+    source: 'f84ff063-da3e-42d2-8176-1eb3beec6d5b',
+    target: '6196b76b-58ba-4d3f-a34e-835c5c1723db',
   },
   {
-    id: 'active-mq-parallel',
-    source: 'active-mq',
-    target: 'parallel',
+    id: 'e84ac89c-9fbc-4d5d-8a97-6968d8ff1592-cf600a18-316a-4fdd-a067-29b73d2dfea9',
+    source: 'e84ac89c-9fbc-4d5d-8a97-6968d8ff1592',
+    target: 'cf600a18-316a-4fdd-a067-29b73d2dfea9',
   },
   {
-    id: 'parallel-script',
-    source: 'parallel',
-    target: 'script',
+    id: 'b5c6f02f-0506-4bee-887d-6f42649c384e-e84ac89c-9fbc-4d5d-8a97-6968d8ff1592',
+    source: 'b5c6f02f-0506-4bee-887d-6f42649c384e',
+    target: 'e84ac89c-9fbc-4d5d-8a97-6968d8ff1592',
   },
   {
-    id: 'script-smtp',
-    source: 'script',
-    target: 'smtp',
+    id: 'b5c6f02f-0506-4bee-887d-6f42649c384e-941c1e1c-a1fb-4cca-b271-2db2e6bd1eb5',
+    source: 'b5c6f02f-0506-4bee-887d-6f42649c384e',
+    target: '941c1e1c-a1fb-4cca-b271-2db2e6bd1eb5',
   },
   {
-    id: 'parallel-sql',
-    source: 'parallel',
-    target: 'sql',
+    id: '6196b76b-58ba-4d3f-a34e-835c5c1723db-b5c6f02f-0506-4bee-887d-6f42649c384e',
+    source: '6196b76b-58ba-4d3f-a34e-835c5c1723db',
+    target: 'b5c6f02f-0506-4bee-887d-6f42649c384e',
   },
   {
-    id: 'parallel-http-sender',
-    source: 'parallel-group',
-    target: 'http-sender',
+    id: 'b5c6f02f-0506-4bee-887d-6f42649c384e-group-4e913273-f09e-4ee4-81bf-9d5907236e00',
+    source: 'b5c6f02f-0506-4bee-887d-6f42649c384e-group',
+    target: '4e913273-f09e-4ee4-81bf-9d5907236e00',
   },
 ];

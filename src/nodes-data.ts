@@ -1,47 +1,156 @@
 export type Node = {
-  id: string
-  name: string
-  children: Node[][]
-}
+  id: string;
+  name: string;
+  children: Node[][];
+};
 export const nodes: Node[] = [
   {
-    id: 'f84ff063-da3e-42d2-8176-1eb3beec6d5b',
+    id: 'http1',
     name: 'HTTP Trigger',
     children: [],
   },
   {
-    id: '6196b76b-58ba-4d3f-a34e-835c5c1723db',
+    id: 'activemq61',
     name: 'Active MQ 6.X',
     children: [],
   },
   {
-    id: 'b5c6f02f-0506-4bee-887d-6f42649c384e',
+    id: 'parallel1',
     name: 'Parallel',
     children: [
       [
         {
-          id: 'e84ac89c-9fbc-4d5d-8a97-6968d8ff1592',
+          id: 'script1',
           name: 'Script',
           children: [],
         },
         {
-          id: 'cf600a18-316a-4fdd-a067-29b73d2dfea9',
-          name: 'SMTP',
-          children: [],
-        }
+          id: 'nested-parallel1',
+          name: 'Nested Parallel',
+          children: [
+            [
+              {
+                id: 'smtp1',
+                name: 'SMTP',
+                children: [],
+              },
+              {
+                id: 'logger1',
+                name: 'Logger',
+                children: [
+                  [
+                    {
+                      id: 'sql4',
+                      name: 'SQL',
+                      children: [],
+                    },
+                  ],
+                  [
+                    {
+                      id: 'sql5',
+                      name: 'SQL',
+                      children: [],
+                    },
+                  ],
+                ],
+              },
+            ],
+            [
+              {
+                id: 'cache2',
+                name: 'Cache',
+                children: [],
+              },
+            ],
+          ],
+        },
       ],
       [
         {
-          id: '941c1e1c-a1fb-4cca-b271-2db2e6bd1eb5',
+          id: 'sql1',
           name: 'SQL',
+          children: [
+            [
+              {
+                id: 'sql3',
+                name: 'SQL3',
+                children: [],
+              },
+            ],
+            [
+              {
+                id: 'cache1',
+                name: 'Cache',
+                children: [],
+              },
+            ],
+            [
+              {
+                id: 'rabbitmq1',
+                name: 'RABBITMQ',
+                children: [],
+              },
+            ],
+            [
+              {
+                id: 'kafka1',
+                name: 'Kafka',
+                children: [],
+              },
+            ],
+          ],
+        },
+        {
+          id: 'setBody1',
+          name: 'setBody1',
+          children: [
+            [
+              {
+                id: 'otlp1',
+                name: 'otlp1',
+                children: [],
+              },
+            ],
+            [
+              {
+                id: 'otlp2',
+                name: 'otlp2',
+                children: [],
+              },
+            ],
+          ],
+        },
+      ],
+      [
+        {
+          id: 'sql2',
+          name: 'SQL2',
           children: [],
-        }
-      ]
+        },
+        {
+          id: 'loop1',
+          name: 'loop1',
+          children: [
+            [
+              {
+                id: 'dataMapper1',
+                name: 'dataMapper1',
+                children: [],
+              },
+              {
+                id: 'bean1',
+                name: 'bean1',
+                children: [],
+              },
+            ],
+          ],
+        },
+      ],
     ],
   },
   {
-    id: '4e913273-f09e-4ee4-81bf-9d5907236e00',
+    id: 'httpsender1',
     name: 'HTTP Sender',
     children: [],
-  }
-]
+  },
+];
