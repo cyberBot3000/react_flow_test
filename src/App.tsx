@@ -1,6 +1,8 @@
 import { ReactFlow, Background, Controls, MiniMap, useEdgesState, useNodesState } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { nodes as treeNodes } from './nodes-data';
+//import { nodes as treeNodes } from './nodes-data-long';
+//import { nodes as treeNodes } from './nodes-data-large-deep';
+import { nodes as treeNodes } from './nodes-data-simple';
 import { buildFlowFromTree } from './flow-utils';
 import { useEffect } from 'react';
 import { ResizableNode } from './ResizableNode';
@@ -36,6 +38,8 @@ function App() {
         onEdgesChange={onEdgesChange}
         fitView
         nodeTypes={nodeTypes}
+        panOnScroll
+        panOnDrag={[1, 2]}
       >
         <Background />
         <Controls />

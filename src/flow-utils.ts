@@ -1,14 +1,14 @@
 import { type Node as FlowNode, type Edge, Position } from '@xyflow/react';
-import { type Node } from './nodes-data';
+import type { Node } from './nodes.interfaces';
 
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 40;
-const HORIZONTAL_GAP = 100;
-const VERTICAL_GAP = 50;
+const HORIZONTAL_GAP = 70;
+const VERTICAL_GAP = 20;
 const GROUP_PADDING = {
   top: 20,
   bottom: 20,
-  left: 150,
+  left: 120,
   right: 20,
 };
 
@@ -29,7 +29,7 @@ export function buildFlowFromTree(treeNodes: Node[]): { nodes: FlowNode[]; edges
 }
 
 function layoutGroup(node: Node, startX: number, startY: number = 0, parentId?: string, { zIndex = 0 }: { zIndex?: number } = {}): LayoutResult {
-  console.log('layoutGroup', node.name, startX, startY, parentId, zIndex);
+  //console.log('layoutGroup', node.name, startX, startY, parentId, zIndex);
   const nodes: FlowNode[] = [];
   const edges: Edge[] = [];
 
@@ -76,20 +76,21 @@ function layoutGroup(node: Node, startX: number, startY: number = 0, parentId?: 
       width: groupWidth,
       height: groupHeight,
     },
+    extent: 'parent',
   };
   nodes.push(groupNode);
 
-  console.log('listLayouts', listLayouts);
+  //console.log('listLayouts', listLayouts);
 
   let listY = GROUP_PADDING.top;
   for (let i = 0; i < listLayouts.length; i++) {
     const listLayout = listLayouts[i];
-    console.log('listLayout', node.id, listLayout);
+    //console.log('listLayout', node.id, listLayout);
     const relativeNodes = listLayout.nodes.map((n) => {
       const matchList = node.children[i].find((childNode) => (childNode.id === n.id && n.parentId === getGroupId(node)) || getGroupId(childNode) === n.id);
       let y = n.position.y;
       if (matchList) {
-        console.log('matchList', node, n, '\n',listLayout.height, NODE_HEIGHT);
+        //console.log('matchList', node, n, '\n',listLayout.height, NODE_HEIGHT);
         const listCenteredShift = n.measured?.height ? (listLayout.height - n.measured.height) / 2 : 0;
         y = listY + listCenteredShift;
       }
@@ -144,14 +145,14 @@ function layoutGroup(node: Node, startX: number, startY: number = 0, parentId?: 
 }
 
 function layoutList(nodeList: Node[], startX: number, startY: number, parentId: string, { zIndex = 0 }: { zIndex?: number } = {}): LayoutResult {
-  console.log(
-    'layoutList',
-    nodeList.map((n) => n.name),
-    startX,
-    startY,
-    parentId,
-    zIndex
-  );
+  // console.log(
+  //   'layoutList',
+  //   nodeList.map((n) => n.name),
+  //   startX,
+  //   startY,
+  //   parentId,
+  //   zIndex
+  // );
   const nodes: FlowNode[] = [];
   const edges: Edge[] = [];
   let currentX = 0;
@@ -180,6 +181,7 @@ function layoutList(nodeList: Node[], startX: number, startY: number, parentId: 
           width: NODE_WIDTH,
           height: NODE_HEIGHT,
         },
+        extent: 'parent',
       };
       nodes.push(flowNode);
 

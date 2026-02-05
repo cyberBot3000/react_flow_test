@@ -1,13 +1,15 @@
-export type Node = {
-  id: string;
-  name: string;
-  children: Node[][];
-};
+import type { Node } from './nodes.interfaces';
+
 export const nodes: Node[] = [
   {
     id: 'http1',
     name: 'HTTP Trigger',
     children: [],
+  },
+  {
+    id: 'http2',
+    name: 'choice',
+    children: [[{id: 'when', name: 'When', children: []}], [{id: 'otherwise', name: 'Otherwise', children: []}]],
   },
   {
     id: 'activemq61',
@@ -152,5 +154,61 @@ export const nodes: Node[] = [
     id: 'httpsender1',
     name: 'HTTP Sender',
     children: [],
+  },
+  {
+    id: 'httpsender2',
+    name: 'HTTP Sender2',
+    children: [
+      [
+        {
+          id: 'parallel923932',
+          name: 'Parallel923',
+          children: [
+            [
+              {
+                id: 'sql10',
+                name: 'SQL',
+                children: [],
+              },
+              {
+                id: 'sql11',
+                name: 'SQL',
+                children: [
+                  [
+                    {
+                      id: 'sql111',
+                      name: 'SQLudududu',
+                      children: [],
+                    },
+                  ],
+                  [
+                    {
+                      id: 'sql1342',
+                      name: 'asklfjasljflasdj',
+                      children: [],
+                    },
+                  ],
+                ],
+              },
+              {
+                id: 'sql12',
+                name: 'SQL',
+                children: [],
+              },
+              {
+                id: 'sql13',
+                name: 'SQL',
+                children: [],
+              },
+            ],
+          ],
+        },
+      ],
+      [{
+        id: 'rabbitmq5x103030',
+        name: 'RabbitMQ 5.X',
+        children: [],
+      }]
+    ],
   },
 ];
