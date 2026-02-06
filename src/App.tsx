@@ -2,13 +2,14 @@ import { ReactFlow, Background, Controls, MiniMap, useEdgesState, useNodesState,
 import '@xyflow/react/dist/style.css';
 //import { nodes as treeNodes } from './nodes-data-long';
 //import { nodes as treeNodes } from './nodes-data-large-deep';
-import { nodes as treeNodes } from './nodes-data-simple';
+//import { nodes as treeNodes } from './nodes-data-simple';
 import { buildFlowFromTree } from './flow-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { ResizableNode } from './ResizableNode';
 import { GroupNode } from './components/GroupNode';
 import NodeInspector from './components/NodeInspector';
 import { DefaultNode } from './components/DefaultNode';
+import { useNodesModel } from './model/useNodesModel';
 
 const nodeTypes = {
   ResizableNode: ResizableNode,
@@ -20,18 +21,18 @@ function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [collapsedNodes, setCollapsedNodes] = useState<Record<string, boolean>>({});
+  const { nodes: treeNodes, deleteNode, addNode } = useNodesModel();
 
   useEffect(() => {
     console.log(
       'Nodes state:',
-      nodes.map((n) => ({ name: n.data.label, x: n.position.x, y: n.position.y })),
+      nodes.map((n) => ({ name: n.data.name, x: n.position.x, y: n.position.y, width: n.measured?.width, height: n.measured?.height })),
       'Edges state:',
       edges
     );
   }, [nodes, edges]);
 
   const handleNodeCollapse = useCallback((id: string, isCollapsed: boolean) => {
-    console.log('handleNodeCollapse', id, isCollapsed);
     setCollapsedNodes((prevCollapsedNodes) => ({
       ...prevCollapsedNodes,
       [id]: isCollapsed,
@@ -39,10 +40,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const { nodes: updatedNodes, edges: updatedEdges } = buildFlowFromTree(treeNodes, { handleNodeCollapse, collapsedNodes });
+    const { nodes: updatedNodes, edges: updatedEdges } = buildFlowFromTree(treeNodes, { handleNodeCollapse, collapsedNodes, deleteNode, addNode });
+    console.log('updatedNodes', updatedNodes);
     setNodes(updatedNodes);
     setEdges(updatedEdges);
-  }, [collapsedNodes, handleNodeCollapse, setNodes, setEdges]);
+  }, [collapsedNodes, handleNodeCollapse, setNodes, setEdges, treeNodes, deleteNode, addNode]);
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>

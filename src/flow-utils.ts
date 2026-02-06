@@ -21,6 +21,8 @@ type LayoutResult = {
 };
 
 interface BuildFlowOptions {
+  deleteNode: (id: string) => void;
+  addNode: (node: Node, parentId: string, branchIndex: number, index: number) => void;
   handleNodeCollapse: (id: string, isCollapsed: boolean) => void;
   collapsedNodes: Record<string, boolean>;
 }
@@ -30,6 +32,7 @@ interface LayoutOptions extends BuildFlowOptions {
 }
 
 export function buildFlowFromTree(treeNodes: Node[], options: BuildFlowOptions): { nodes: FlowNode[]; edges: Edge[] } {
+  console.log('buildFlowFromTree', treeNodes);
   const result = layoutList(treeNodes, 0, 0, '', { zIndex: 0, ...options });
   return { nodes: result.nodes, edges: result.edges };
 }
@@ -39,9 +42,9 @@ function layoutGroup(
   startX: number,
   startY: number = 0,
   parentId: string | undefined,
-  { zIndex = 0, handleNodeCollapse, collapsedNodes }: LayoutOptions
+  { zIndex = 0, ...options }: LayoutOptions
 ): LayoutResult {
-  //console.log('layoutGroup', node.name, startX, startY, parentId, zIndex);
+  console.log('layoutGroup', node.name, startX, startY, parentId, zIndex);
   const nodes: FlowNode[] = [];
   const edges: Edge[] = [];
 
@@ -51,9 +54,12 @@ function layoutGroup(
   let currentY = GROUP_PADDING.top;
   const listLayouts: LayoutResult[] = [];
 
-  if (!collapsedNodes[groupId]) {
+  if (!options.collapsedNodes[groupId]) {
     for (const childList of node.children) {
-      const listLayout = layoutList(childList, GROUP_PADDING.left, currentY, groupId, { zIndex: zIndex + 1, handleNodeCollapse, collapsedNodes });
+      if (childList.length === 0) {
+        continue;
+      }
+      const listLayout = layoutList(childList, GROUP_PADDING.left, currentY, groupId, { zIndex: zIndex + 1, ...options });
       listLayouts.push(listLayout);
 
       maxListWidth = Math.max(maxListWidth, listLayout.width);
@@ -62,6 +68,7 @@ function layoutGroup(
   }
 
   const totalHeight = currentY - GROUP_PADDING.top - VERTICAL_GAP;
+  console.log('list layouts for', node.name, listLayouts, 'currentY', currentY, 'totalHeight', totalHeight);
 
   const groupHeight = totalHeight + GROUP_PADDING.top + GROUP_PADDING.bottom;
   const groupWidth = maxListWidth + GROUP_PADDING.left + GROUP_PADDING.right;
@@ -73,11 +80,9 @@ function layoutGroup(
     component: {
       name: node.name,
     },
-    isCollapsed: collapsedNodes[groupId] || false,
-    collapse: handleNodeCollapse,
-    delete: (id: string) => {
-      console.log('delete', id);
-    },
+    isCollapsed: options.collapsedNodes[groupId] || false,
+    collapse: options.handleNodeCollapse,
+    delete: options.deleteNode,
   };
 
   const parentNode: FlowNode = {
@@ -98,7 +103,7 @@ function layoutGroup(
   };
   nodes.push(parentNode);
 
-  if (!collapsedNodes[groupId]) {
+  if (!options.collapsedNodes[groupId]) {
     let listY = GROUP_PADDING.top;
     for (let i = 0; i < listLayouts.length; i++) {
       const listLayout = listLayouts[i];
@@ -146,7 +151,7 @@ function layoutList(
   startX: number,
   startY: number,
   parentId: string | undefined,
-  { zIndex = 0, handleNodeCollapse, collapsedNodes }: LayoutOptions
+  { zIndex = 0, ...options }: LayoutOptions
 ): LayoutResult {
   // console.log(
   //   'layoutList',
@@ -170,9 +175,7 @@ function layoutList(
       component: {
         name: node.name,
       },
-      delete: (id: string) => {
-        console.log('delete', id);
-      },
+      delete: options.deleteNode,
     };
 
     if (node.children.length === 0) {
@@ -210,7 +213,7 @@ function layoutList(
 
       currentX += NODE_WIDTH + HORIZONTAL_GAP;
     } else {
-      const groupLayout = layoutGroup(node, startX + currentX, startY, parentId || undefined, { zIndex, handleNodeCollapse, collapsedNodes });
+      const groupLayout = layoutGroup(node, startX + currentX, startY, parentId || undefined, { zIndex, ...options });
       nodes.push(...groupLayout.nodes);
       edges.push(...groupLayout.edges);
 
