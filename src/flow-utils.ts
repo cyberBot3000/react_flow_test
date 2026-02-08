@@ -26,6 +26,7 @@ interface BuildFlowOptions {
   addNode: (node: Node, parentId: string, branchIndex: number, index: number) => void;
   handleNodeCollapse: (id: string, isCollapsed: boolean) => void;
   collapsedNodes: Record<string, boolean>;
+  addEmptyNode: (parentId: string, branchIndex: number, index: number, insertNewBranch?: boolean) => void;
 }
 
 interface LayoutOptions extends BuildFlowOptions {
@@ -45,7 +46,7 @@ function layoutGroup(
   parentId: string | undefined,
   { zIndex = 0, ...options }: LayoutOptions
 ): LayoutResult {
-  console.log('layoutGroup', node.name, startX, startY, parentId, zIndex);
+  //console.log('layoutGroup', node.name, startX, startY, parentId, zIndex);
   const nodes: FlowNode[] = [];
   const edges: Edge[] = [];
 
@@ -69,7 +70,7 @@ function layoutGroup(
   }
 
   const totalHeight = currentY - GROUP_PADDING.top - VERTICAL_GAP;
-  console.log('list layouts for', node.name, listLayouts, 'currentY', currentY, 'totalHeight', totalHeight);
+  //console.log('list layouts for', node.name, listLayouts, 'currentY', currentY, 'totalHeight', totalHeight);
 
   const groupHeight = totalHeight + GROUP_PADDING.top + GROUP_PADDING.bottom;
   const groupWidth = maxListWidth + GROUP_PADDING.left + GROUP_PADDING.right;
@@ -84,6 +85,7 @@ function layoutGroup(
     isCollapsed: options.collapsedNodes[groupId] || false,
     collapse: options.handleNodeCollapse,
     delete: options.deleteNode,
+    addEmptyNode: options.addEmptyNode,
   };
 
   const parentNode: FlowNode = {
@@ -180,7 +182,7 @@ function layoutList(
     if (!isGroupNode(node)) {
       const flowNode: FlowNode = {
         id: node.id,
-        type: 'DefaultNode',
+        type: node.type === 'empty' ? 'EmptyNode' : 'DefaultNode',
         data: defaultData,
         position: {
           x: startX + currentX,

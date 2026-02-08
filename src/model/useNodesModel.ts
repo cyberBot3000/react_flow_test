@@ -52,7 +52,8 @@ const insertNode = (
   node: Node,
   parentId: string | undefined,
   branchIndex: number | undefined,
-  index: number
+  index: number,
+  insertNewBranch?: boolean
 ): Node[] => {
   if (parentId === undefined) {
     const result = [...nodes];
@@ -67,11 +68,36 @@ const insertNode = (
           return currentNode;
         }
 
+        const actualBranchIndex =
+          branchIndex >= 0
+            ? branchIndex
+            : currentNode.children.length + branchIndex + 1;
+        console.log("actualBranchIndex: ", actualBranchIndex);
+        if (
+          insertNewBranch &&
+          actualBranchIndex === currentNode.children.length
+        ) {
+          return {
+            ...currentNode,
+            children: [...currentNode.children, [node]],
+          };
+        }
+
+        if (insertNewBranch) {
+          return {
+            ...currentNode,
+            children: [
+              ...currentNode.children.slice(0, actualBranchIndex),
+              [node],
+              ...currentNode.children.slice(actualBranchIndex),
+            ],
+          };
+        }
+
         const newChildren = currentNode.children.map((branch, bIndex) => {
-          if (bIndex !== branchIndex) {
+          if (actualBranchIndex >= 0 && bIndex !== actualBranchIndex) {
             return branch;
           }
-
           const newBranch = [...branch];
           newBranch.splice(index, 0, node);
           return newBranch;
@@ -112,15 +138,42 @@ export const useNodesModel = () => {
   );
 
   const addNode = useCallback(
-    (node: Node, parentId: string, branchIndex: number, index: number) => {
-      insertNode(nodes, node, parentId, branchIndex, index);
+    (
+      node: Node,
+      parentId: string,
+      branchIndex: number,
+      index: number,
+      insertNewBranch?: boolean
+    ) => {
+      setNodes(
+        insertNode(nodes, node, parentId, branchIndex, index, insertNewBranch)
+      );
     },
     [nodes]
+  );
+
+  const addEmptyNode = useCallback(
+    (
+      parentId: string,
+      branchIndex: number,
+      index: number,
+      insertNewBranch?: boolean
+    ) => {
+      addNode(
+        { id: `empty-${Date.now()}`, type: "empty" },
+        parentId,
+        branchIndex,
+        index,
+        insertNewBranch
+      );
+    },
+    [addNode]
   );
 
   return {
     nodes: nodes,
     deleteNode,
     addNode,
+    addEmptyNode,
   };
 };

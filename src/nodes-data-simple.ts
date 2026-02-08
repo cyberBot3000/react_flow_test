@@ -6,15 +6,15 @@ export const nodes: Node[] = [
   //   name: "HTTP Trigger",
   //   type: "default",
   // },
-  // {
-  //   id: "http2",
-  //   name: "choice",
-  //   type: "group",
-  //   children: [
-  //     [{ id: "when", name: "When", type: "default" }],
-  //     [{ id: "otherwise", name: "Otherwise", type: "default" }],
-  //   ],
-  // },
+  {
+    id: "http2",
+    name: "choice",
+    type: "group",
+    children: [
+      [{ id: "when", name: "When", type: "default" }],
+      [{ id: "otherwise", name: "Otherwise", type: "default" }],
+    ],
+  },
   // {
   //   id: "activemq61",
   //   name: "Active MQ 6.X",
@@ -165,65 +165,65 @@ export const nodes: Node[] = [
   //   name: "HTTP Sender",
   //   type: "default",
   // },
-  {
-    id: "httpsender2",
-    name: "HTTP Sender2",
-    type: "group",
-    children: [
-      [
-        {
-          id: "parallel923932",
-          name: "Parallel923",
-          type: "group",
-          children: [
-            [
-              {
-                id: "sql10",
-                name: "SQL",
-                type: "default",
-              },
-              {
-                id: "sql11",
-                name: "SQL",
-                type: "group",
-                children: [
-                  [
-                    {
-                      id: "sql111",
-                      name: "SQLudududu",
-                      type: "default",
-                    },
-                  ],
-                  [
-                    {
-                      id: "sql1342",
-                      name: "asklfjasljflasdj",
-                      type: "default",
-                    },
-                  ],
-                ],
-              },
-              {
-                id: "sql12",
-                name: "SQL",
-                type: "default",
-              },
-              {
-                id: "sql13",
-                name: "SQL",
-                type: "default",
-              },
-            ],
-          ],
-        },
-      ],
-      [
-        {
-          id: "rabbitmq5x103030",
-          name: "RabbitMQ 5.X",
-          type: "default",
-        },
-      ],
-    ],
-  },
+  // {
+  //   id: "httpsender2",
+  //   name: "HTTP Sender2",
+  //   type: "group",
+  //   children: [
+  //     [
+  //       {
+  //         id: "parallel923932",
+  //         name: "Parallel923",
+  //         type: "group",
+  //         children: [
+  //           [
+  //             {
+  //               id: "sql10",
+  //               name: "SQL",
+  //               type: "default",
+  //             },
+  //             {
+  //               id: "sql11",
+  //               name: "SQL",
+  //               type: "group",
+  //               children: [
+  //                 [
+  //                   {
+  //                     id: "sql111",
+  //                     name: "SQLudududu",
+  //                     type: "default",
+  //                   },
+  //                 ],
+  //                 [
+  //                   {
+  //                     id: "sql1342",
+  //                     name: "asklfjasljflasdj",
+  //                     type: "default",
+  //                   },
+  //                 ],
+  //               ],
+  //             },
+  //             {
+  //               id: "sql12",
+  //               name: "SQL",
+  //               type: "default",
+  //             },
+  //             {
+  //               id: "sql13",
+  //               name: "SQL",
+  //               type: "default",
+  //             },
+  //           ],
+  //         ],
+  //       },
+  //     ],
+  //     [
+  //       {
+  //         id: "rabbitmq5x103030",
+  //         name: "RabbitMQ 5.X",
+  //         type: "default",
+  //       },
+  //     ],
+  //   ],
+  // },
 ];
