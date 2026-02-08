@@ -1,6 +1,6 @@
 export interface GroupNodeData extends Record<string, unknown> {
-  name: string;
-  component: {
+  name?: string;
+  component?: {
     name: string;
   }
   isCollapsed: boolean;
@@ -10,9 +10,9 @@ export interface GroupNodeData extends Record<string, unknown> {
 
 
 export interface DefaultNodeData extends Record<string, unknown> {
-  name: string;
-  component: {
-    name: string;
+  name?: string;
+  component?: {
+    name?: string;
   };
   delete: (id: string) => void;
 }

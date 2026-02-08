@@ -1,6 +1,7 @@
 import { type Node as FlowNode, type Edge, Position } from '@xyflow/react';
-import type { Node } from './nodes.interfaces';
+import type { GroupNodeType, Node } from './nodes.interfaces';
 import type { DefaultNodeData, GroupNodeData } from './components/types';
+import { isEmptyNode, isGroupNode } from './model/typeguards';
 
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 70;
@@ -38,7 +39,7 @@ export function buildFlowFromTree(treeNodes: Node[], options: BuildFlowOptions):
 }
 
 function layoutGroup(
-  node: Node,
+  node: GroupNodeType,
   startX: number,
   startY: number = 0,
   parentId: string | undefined,
@@ -171,14 +172,12 @@ function layoutList(
     const prevNode = i > 0 ? nodeList[i - 1] : null;
 
     const defaultData: DefaultNodeData = {
-      name: node.name,
-      component: {
-        name: node.name,
-      },
+      name: !isEmptyNode(node) ? node.name : undefined,
+      component: !isEmptyNode(node) ? { name: node.name } : undefined,
       delete: options.deleteNode,
     };
 
-    if (node.children.length === 0) {
+    if (!isGroupNode(node)) {
       const flowNode: FlowNode = {
         id: node.id,
         type: 'DefaultNode',
@@ -201,14 +200,10 @@ function layoutList(
 
       if (prevNode) {
         let sourceHandle = 'outer-source';
-        let targetHandle = undefined;
-        if (prevNode.children.length > 0) {
+        if (isGroupNode(prevNode) && prevNode.children.length > 0) {
           sourceHandle = 'outer-source';
         }
-        if (node.children.length > 0) {
-          targetHandle = 'inner-target';
-        }
-        edges.push(createEdge(prevNode.id, node.id, sourceHandle, targetHandle));
+        edges.push(createEdge(prevNode.id, node.id, sourceHandle));
       }
 
       currentX += NODE_WIDTH + HORIZONTAL_GAP;
@@ -220,7 +215,7 @@ function layoutList(
       if (prevNode) {
         let sourceHandle = undefined;
         const targetHandle = 'outer-target';
-        if (prevNode.children.length > 0) {
+        if (isGroupNode(prevNode) && prevNode.children.length > 0) {
           sourceHandle = 'outer-source';
         }
         edges.push(createEdge(prevNode.id, node.id, sourceHandle, targetHandle));
