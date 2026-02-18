@@ -1,19 +1,13 @@
-import { useCallback, useState } from "react";
-import type { Node } from "../nodes.interfaces";
+import { useCallback, useState } from 'react';
+import type { Node } from '../nodes.interfaces';
 //import { nodes as initialNodes } from '../nodes-data-long';
 //import { nodes as initialNodes } from '../nodes-data-large-deep';
-import { nodes as initialNodes } from "../nodes-data-simple";
-import { isGroupNode } from "./typeguards";
+import { nodes as initialNodes } from '../nodes-data-simple';
+import { isGroupNode } from './typeguards';
 
 const filterNodesDeep = (
   nodes: Node[],
-  cb: (
-    node: Node,
-    index: number,
-    branchIndex: number | undefined,
-    parentId: string | undefined,
-    currentList: Node[]
-  ) => boolean,
+  cb: (node: Node, index: number, branchIndex: number | undefined, parentId: string | undefined, currentList: Node[]) => boolean,
   branchIndex?: number,
   parentId?: string
 ): Node[] => {
@@ -55,8 +49,13 @@ const insertNode = (
   index: number,
   insertNewBranch?: boolean
 ): Node[] => {
-  if (parentId === undefined) {
+  console.log('insertNode', { nodes, node, parentId, branchIndex, index, length: nodes.length, insertNewBranch });
+  if (!parentId) {
     const result = [...nodes];
+    if (index >= nodes.length) {
+      result.push(node);
+      return result;
+    }
     result.splice(index, 0, node);
     return result;
   }
@@ -68,15 +67,8 @@ const insertNode = (
           return currentNode;
         }
 
-        const actualBranchIndex =
-          branchIndex >= 0
-            ? branchIndex
-            : currentNode.children.length + branchIndex + 1;
-        console.log("actualBranchIndex: ", actualBranchIndex);
-        if (
-          insertNewBranch &&
-          actualBranchIndex === currentNode.children.length
-        ) {
+        const actualBranchIndex = branchIndex >= 0 ? branchIndex : currentNode.children.length + branchIndex + 1;
+        if (insertNewBranch && actualBranchIndex === currentNode.children.length) {
           return {
             ...currentNode,
             children: [...currentNode.children, [node]],
@@ -86,11 +78,7 @@ const insertNode = (
         if (insertNewBranch) {
           return {
             ...currentNode,
-            children: [
-              ...currentNode.children.slice(0, actualBranchIndex),
-              [node],
-              ...currentNode.children.slice(actualBranchIndex),
-            ],
+            children: [...currentNode.children.slice(0, actualBranchIndex), [node], ...currentNode.children.slice(actualBranchIndex)],
           };
         }
 
@@ -113,9 +101,7 @@ const insertNode = (
         return currentNode;
       }
 
-      const newChildren = currentNode.children.map((branch) =>
-        insertNode(branch, node, parentId, branchIndex, index)
-      );
+      const newChildren = currentNode.children.map((branch) => insertNode(branch, node, parentId, branchIndex, index));
 
       return {
         ...currentNode,
@@ -131,41 +117,22 @@ export const useNodesModel = () => {
 
   const deleteNode = useCallback(
     (id: string) => {
-      console.log("deleteNode", id, nodes);
+      console.log('deleteNode', id, nodes);
       setNodes(filterNodesDeep(nodes, (node) => node.id !== id));
     },
     [nodes]
   );
 
   const addNode = useCallback(
-    (
-      node: Node,
-      parentId: string,
-      branchIndex: number,
-      index: number,
-      insertNewBranch?: boolean
-    ) => {
-      setNodes(
-        insertNode(nodes, node, parentId, branchIndex, index, insertNewBranch)
-      );
+    (node: Node, parentId: string | undefined, branchIndex: number | undefined, index: number, insertNewBranch?: boolean) => {
+      setNodes(insertNode(nodes, node, parentId, branchIndex, index, insertNewBranch));
     },
     [nodes]
   );
 
   const addEmptyNode = useCallback(
-    (
-      parentId: string,
-      branchIndex: number,
-      index: number,
-      insertNewBranch?: boolean
-    ) => {
-      addNode(
-        { id: `empty-${Date.now()}`, type: "empty" },
-        parentId,
-        branchIndex,
-        index,
-        insertNewBranch
-      );
+    (parentId: string | undefined, branchIndex: number | undefined, index: number, insertNewBranch?: boolean) => {
+      addNode({ id: `empty-${Date.now()}`, type: 'empty' }, parentId, branchIndex, index, insertNewBranch);
     },
     [addNode]
   );

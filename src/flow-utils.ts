@@ -23,10 +23,10 @@ type LayoutResult = {
 
 interface BuildFlowOptions {
   deleteNode: (id: string) => void;
-  addNode: (node: Node, parentId: string, branchIndex: number, index: number) => void;
+  addNode: (node: Node, parentId: string | undefined, branchIndex: number | undefined, index: number) => void;
   handleNodeCollapse: (id: string, isCollapsed: boolean) => void;
   collapsedNodes: Record<string, boolean>;
-  addEmptyNode: (parentId: string, branchIndex: number, index: number, insertNewBranch?: boolean) => void;
+  addEmptyNode: (parentId: string | undefined, branchIndex: number | undefined, index: number, insertNewBranch?: boolean) => void;
 }
 
 interface LayoutOptions extends BuildFlowOptions {
@@ -35,7 +35,7 @@ interface LayoutOptions extends BuildFlowOptions {
 
 export function buildFlowFromTree(treeNodes: Node[], options: BuildFlowOptions): { nodes: FlowNode[]; edges: Edge[] } {
   console.log('buildFlowFromTree', treeNodes);
-  const result = layoutList(treeNodes, 0, 0, '', { zIndex: 0, ...options });
+  const result = layoutList(treeNodes, 0, 0, '', undefined, { zIndex: 0, ...options });
   return { nodes: result.nodes, edges: result.edges };
 }
 
@@ -44,6 +44,9 @@ function layoutGroup(
   startX: number,
   startY: number = 0,
   parentId: string | undefined,
+  branchIndex: number | undefined,
+  branchLength: number,
+  index: number,
   { zIndex = 0, ...options }: LayoutOptions
 ): LayoutResult {
   //console.log('layoutGroup', node.name, startX, startY, parentId, zIndex);
@@ -57,11 +60,12 @@ function layoutGroup(
   const listLayouts: LayoutResult[] = [];
 
   if (!options.collapsedNodes[groupId]) {
-    for (const childList of node.children) {
+    for (let branchIndex = 0; branchIndex < node.children.length; branchIndex++) {
+      const childList = node.children[branchIndex];
       if (childList.length === 0) {
         continue;
       }
-      const listLayout = layoutList(childList, GROUP_PADDING.left, currentY, groupId, { zIndex: zIndex + 1, ...options });
+      const listLayout = layoutList(childList, GROUP_PADDING.left, currentY, groupId, branchIndex, { zIndex: zIndex + 1, ...options });
       listLayouts.push(listLayout);
 
       maxListWidth = Math.max(maxListWidth, listLayout.width);
@@ -86,6 +90,10 @@ function layoutGroup(
     collapse: options.handleNodeCollapse,
     delete: options.deleteNode,
     addEmptyNode: options.addEmptyNode,
+    branchLength: branchLength,
+    index: index,
+    parentId: parentId,
+    branchIndex: branchIndex,
   };
 
   const parentNode: FlowNode = {
@@ -154,6 +162,7 @@ function layoutList(
   startX: number,
   startY: number,
   parentId: string | undefined,
+  branchIndex: number | undefined,
   { zIndex = 0, ...options }: LayoutOptions
 ): LayoutResult {
   // console.log(
@@ -177,6 +186,11 @@ function layoutList(
       name: !isEmptyNode(node) ? node.name : undefined,
       component: !isEmptyNode(node) ? { name: node.name } : undefined,
       delete: options.deleteNode,
+      parentId: parentId,
+      branchIndex: branchIndex,
+      index: i,
+      branchLength: nodeList.length,
+      addEmptyNode: options.addEmptyNode,
     };
 
     if (!isGroupNode(node)) {
@@ -190,7 +204,7 @@ function layoutList(
         },
         targetPosition: Position.Left,
         sourcePosition: Position.Right,
-        parentId: parentId || undefined,
+        parentId: parentId,
         zIndex,
         measured: {
           width: NODE_WIDTH,
@@ -210,7 +224,7 @@ function layoutList(
 
       currentX += NODE_WIDTH + HORIZONTAL_GAP;
     } else {
-      const groupLayout = layoutGroup(node, startX + currentX, startY, parentId || undefined, { zIndex, ...options });
+      const groupLayout = layoutGroup(node, startX + currentX, startY, parentId, branchIndex, nodeList.length, i, { zIndex, ...options });
       nodes.push(...groupLayout.nodes);
       edges.push(...groupLayout.edges);
 
