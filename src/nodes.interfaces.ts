@@ -22,11 +22,3 @@ export interface EmptyNodeType extends BaseNodeType {
 
 
 export type Node = DefaultNodeType | GroupNodeType | EmptyNodeType;
-
-
-const node: Node = {
-  type: 'default',
-  id: 'sdfjljsdalkjldsajklfdjsa',
-  name: 'sslkjsdlfjds',
-
-}

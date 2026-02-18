@@ -4,12 +4,14 @@ import styles from './GroupNode.module.css';
 import { memo } from 'react';
 import type { GroupNodeData } from '../types';
 import { AddNode } from '../AddNode';
+import { useDnD } from '../../model/pallete/dnd/dnd-context';
 
 interface GroupNodeProps extends NodeProps {
   data: GroupNodeData;
 }
 
 export const GroupNode = memo(({ data, width, height, id }: GroupNodeProps) => {
+  const { component } = useDnD();
   return (
     <div className={styles.groupNode} style={{ width, height }}>
       <div className={styles.childrenWrapper}>
@@ -35,9 +37,9 @@ export const GroupNode = memo(({ data, width, height, id }: GroupNodeProps) => {
         </div>
         <Handle type="source" position={Position.Right} id="outer-source" className={styles.outerSourceHandle} />
       </div>
-      {data.index === data.branchLength - 1 && (
+      {!!component && data.index === data.branchLength - 1 && (
         <div className={styles.addNodeContinaer}>
-          <AddNode onAddNode={() => data.addEmptyNode(data.parentId, data.branchIndex, data.index + 1, false)} />
+          <AddNode createNode={data.addNode} index={data.index} branchIndex={data.branchIndex} parentId={data.parentId} />
         </div>
       )}
     </div>

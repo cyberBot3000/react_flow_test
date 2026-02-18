@@ -101,7 +101,7 @@ const insertNode = (
         return currentNode;
       }
 
-      const newChildren = currentNode.children.map((branch) => insertNode(branch, node, parentId, branchIndex, index));
+      const newChildren = currentNode.children.map((branch) => insertNode(branch, node, parentId, branchIndex, index, insertNewBranch));
 
       return {
         ...currentNode,
@@ -115,23 +115,20 @@ const insertNode = (
 export const useNodesModel = () => {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
 
-  const deleteNode = useCallback(
-    (id: string) => {
-      console.log('deleteNode', id, nodes);
-      setNodes(filterNodesDeep(nodes, (node) => node.id !== id));
-    },
-    [nodes]
-  );
+  const deleteNode = useCallback((id: string) => {
+    setNodes((currNodes) => filterNodesDeep(currNodes, (node) => node.id !== id));
+  }, []);
 
   const addNode = useCallback(
     (node: Node, parentId: string | undefined, branchIndex: number | undefined, index: number, insertNewBranch?: boolean) => {
-      setNodes(insertNode(nodes, node, parentId, branchIndex, index, insertNewBranch));
+      setNodes((currNodes) => insertNode(currNodes, node, parentId, branchIndex, index, insertNewBranch));
     },
-    [nodes]
+    []
   );
 
   const addEmptyNode = useCallback(
     (parentId: string | undefined, branchIndex: number | undefined, index: number, insertNewBranch?: boolean) => {
+      console.log('addEmptyNode', { parentId, branchIndex, index, insertNewBranch });
       addNode({ id: `empty-${Date.now()}`, type: 'empty' }, parentId, branchIndex, index, insertNewBranch);
     },
     [addNode]

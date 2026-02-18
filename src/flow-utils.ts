@@ -90,6 +90,7 @@ function layoutGroup(
     collapse: options.handleNodeCollapse,
     delete: options.deleteNode,
     addEmptyNode: options.addEmptyNode,
+    addNode: options.addNode,
     branchLength: branchLength,
     index: index,
     parentId: parentId,
@@ -190,7 +191,7 @@ function layoutList(
       branchIndex: branchIndex,
       index: i,
       branchLength: nodeList.length,
-      addEmptyNode: options.addEmptyNode,
+      addNode: options.addNode,
     };
 
     if (!isGroupNode(node)) {
