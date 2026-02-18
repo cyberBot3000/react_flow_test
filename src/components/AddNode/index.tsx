@@ -1,15 +1,16 @@
 import { useDnD } from '../../model/pallete/dnd/dnd-context';
-import type { Node } from '../../nodes.interfaces';
+import { type AddNode as AddNodeType } from '../../model/types';
 import styles from './AddNode.module.css';
 import { memo } from 'react';
 interface AddNodeProps {
-  createNode: (node: Node, parentId: string | undefined, branchIndex: number | undefined, index: number) => void;
+  createNode: AddNodeType;
   parentId?: string;
   branchIndex?: number;
   index: number;
+  append?: boolean;
 }
 
-export const AddNode = memo(({ createNode, parentId, branchIndex, index }: AddNodeProps) => {
+export const AddNode = memo(({ createNode, parentId, branchIndex, index, append=true }: AddNodeProps) => {
   const { component, setComponent } = useDnD();
 
   const handleOnDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -30,7 +31,7 @@ export const AddNode = memo(({ createNode, parentId, branchIndex, index }: AddNo
         },
         parentId,
         branchIndex,
-        index + 1,
+        append ? index + 1 : index,
       );
       setComponent(null);
     }

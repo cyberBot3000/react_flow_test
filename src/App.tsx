@@ -14,12 +14,17 @@ import { EmptyNode } from './components/EmptyNode';
 import { Pallete } from './model/pallete/panel';
 import { DnDProvider } from './model/pallete/dnd/dnd-provider';
 import styles from './app.module.scss';
+import { LabeledEdge } from './components/labeled-edge';
 
 const nodeTypes = {
   ResizableNode: ResizableNode,
   GroupNode: GroupNode,
   DefaultNode: DefaultNode,
   EmptyNode: EmptyNode,
+};
+
+const edgesTypes = {
+  LabeledEdge: LabeledEdge,
 };
 
 function App() {
@@ -74,6 +79,7 @@ function App() {
             onEdgesChange={onEdgesChange}
             fitView
             nodeTypes={nodeTypes}
+            edgeTypes={edgesTypes}
             panOnScroll
             panOnDrag={[1, 2]}
           >

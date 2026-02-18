@@ -1,18 +1,19 @@
 import { type Node as FlowNode, type Edge, Position } from '@xyflow/react';
 import type { GroupNodeType, Node } from './nodes.interfaces';
-import type { DefaultNodeData, GroupNodeData } from './components/types';
+import type { DefaultNodeData, EdgeData, GroupNodeData } from './components/types';
 import { isEmptyNode, isGroupNode } from './model/typeguards';
 
 const NODE_WIDTH = 150;
-const NODE_HEIGHT = 70;
+const NODE_HEIGHT = 80;
 const HORIZONTAL_GAP = 50;
 const VERTICAL_GAP = 20;
 const GROUP_PADDING = {
-  top: 20,
-  bottom: 20,
-  left: 120,
-  right: 20,
+  top: 10,
+  bottom: 10,
+  left: 160,
+  right: 50,
 };
+const MIN_GROUP_NODE_HEIGHT = 100;
 
 type LayoutResult = {
   nodes: FlowNode[];
@@ -58,14 +59,15 @@ function layoutGroup(
   let maxListWidth = 0;
   let currentY = GROUP_PADDING.top;
   const listLayouts: LayoutResult[] = [];
+  const hasChildren = node.children.some((list) => list.length > 0);
 
   if (!options.collapsedNodes[groupId]) {
-    for (let branchIndex = 0; branchIndex < node.children.length; branchIndex++) {
-      const childList = node.children[branchIndex];
+    for (let bIndex = 0; bIndex < node.children.length; bIndex++) {
+      const childList = node.children[bIndex];
       if (childList.length === 0) {
         continue;
       }
-      const listLayout = layoutList(childList, GROUP_PADDING.left, currentY, groupId, branchIndex, { zIndex: zIndex + 1, ...options });
+      const listLayout = layoutList(childList, GROUP_PADDING.left, currentY, groupId, bIndex, { zIndex: zIndex + 1, ...options });
       listLayouts.push(listLayout);
 
       maxListWidth = Math.max(maxListWidth, listLayout.width);
@@ -74,12 +76,10 @@ function layoutGroup(
   }
 
   const totalHeight = currentY - GROUP_PADDING.top - VERTICAL_GAP;
-  //console.log('list layouts for', node.name, listLayouts, 'currentY', currentY, 'totalHeight', totalHeight);
+  console.log('list layouts for', node.name, listLayouts, 'currentY', currentY, 'totalHeight', totalHeight);
 
-  const groupHeight = totalHeight + GROUP_PADDING.top + GROUP_PADDING.bottom;
-  const groupWidth = maxListWidth + GROUP_PADDING.left + GROUP_PADDING.right;
-  const groupY = startY + (parentId ? GROUP_PADDING.top : 0) + (NODE_HEIGHT - groupHeight) / 2;
-  const groupX = startX;
+  const groupHeight = Math.max(totalHeight + GROUP_PADDING.top + GROUP_PADDING.bottom, MIN_GROUP_NODE_HEIGHT);
+  const groupWidth = maxListWidth + (!options.collapsedNodes[groupId] && hasChildren ? GROUP_PADDING.left + GROUP_PADDING.right : NODE_WIDTH);
 
   const groupData: GroupNodeData = {
     name: node.name,
@@ -102,8 +102,8 @@ function layoutGroup(
     type: 'GroupNode',
     data: groupData,
     position: {
-      x: groupX,
-      y: groupY,
+      x: startX,
+      y: startY,
     },
     parentId: parentId,
     zIndex: zIndex,
@@ -121,7 +121,7 @@ function layoutGroup(
       const listLayout = listLayouts[i];
       //console.log('listLayout', node.id, listLayout);
       const relativeNodes = listLayout.nodes.map((n) => {
-        const matchList = node.children[i].find((childNode) => childNode.id === n.id && n.parentId === node.id); //|| getGroupId(childNode) === n.id
+        const matchList = node.children[i].find((childNode) => childNode.id === n.id && n.parentId === node.id);
         let y = n.position.y;
         if (matchList) {
           //console.log('matchList', node, n, '\n',listLayout.height, NODE_HEIGHT);
@@ -141,19 +141,25 @@ function layoutGroup(
       edges.push(...listLayout.edges);
     }
 
-    for (const childList of node.children) {
+    for (let bIndex = 0; bIndex < node.children.length; bIndex++) {
+      const childList = node.children[bIndex];
       if (childList.length > 0) {
-        edges.push(createEdge(node.id, childList[0].id, 'inner-source'));
+        edges.push(
+          createEdge(
+            { addNode: options.addNode, parentId: node.id, branchIndex: bIndex, index: 0, branchLength: childList.length },
+            node.id,
+            childList[0].id,
+            'inner-source'
+          )
+        );
       }
     }
   }
 
-  const relativeWidth = NODE_WIDTH / 2 + groupWidth;
-
   return {
     nodes,
     edges,
-    width: relativeWidth,
+    width: groupWidth,
     height: Math.max(NODE_HEIGHT, groupHeight),
   };
 }
@@ -220,7 +226,14 @@ function layoutList(
         if (isGroupNode(prevNode) && prevNode.children.length > 0) {
           sourceHandle = 'outer-source';
         }
-        edges.push(createEdge(prevNode.id, node.id, sourceHandle));
+        edges.push(
+          createEdge(
+            { addNode: options.addNode, parentId: parentId, branchIndex: branchIndex, index: i, branchLength: nodeList.length },
+            prevNode.id,
+            node.id,
+            sourceHandle
+          )
+        );
       }
 
       currentX += NODE_WIDTH + HORIZONTAL_GAP;
@@ -235,7 +248,15 @@ function layoutList(
         if (isGroupNode(prevNode) && prevNode.children.length > 0) {
           sourceHandle = 'outer-source';
         }
-        edges.push(createEdge(prevNode.id, node.id, sourceHandle, targetHandle));
+        edges.push(
+          createEdge(
+            { addNode: options.addNode, parentId: parentId, branchIndex: branchIndex, index: i, branchLength: nodeList.length },
+            prevNode.id,
+            node.id,
+            sourceHandle,
+            targetHandle
+          )
+        );
       }
 
       currentX += groupLayout.width + HORIZONTAL_GAP;
@@ -251,13 +272,14 @@ function layoutList(
   };
 }
 
-function createEdge(sourceId: string, targetId: string, sourceHandle?: string, targetHandle?: string): Edge {
+function createEdge(data: EdgeData, sourceId: string, targetId: string, sourceHandle?: string, targetHandle?: string): Edge {
   return {
     id: `${sourceId}_${targetId}`,
     source: sourceId,
     target: targetId,
     sourceHandle: sourceHandle,
     targetHandle: targetHandle,
-    type: 'smoothstep',
+    type: 'LabeledEdge',
+    data,
   };
 }

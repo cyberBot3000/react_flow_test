@@ -55,8 +55,11 @@ function NodeInfo({ id, type, selected, position, absPosition, width, height, da
       className="react-flow__devtools-nodeinfo"
       style={{
         position: 'absolute',
-        transform: `translate(${absPosition.x}px, ${absPosition.y + height}px)`,
-        width: width * 2,
+        transform: `translate(${absPosition.x}px, ${absPosition.y}px)`,
+        width: width,
+        zIndex: 100,
+        backgroundColor: 'rgba(255,255,255,0.5)',
+        margin: '2px',
       }}
     >
       <div>
@@ -65,7 +68,7 @@ function NodeInfo({ id, type, selected, position, absPosition, width, height, da
       <div>
         dimensions: {width} × {height}
       </div>
-      <div>data: {JSON.stringify(data, null, 2)}</div>
+      {/* <div>data: {JSON.stringify(data, null, 2)}</div> */}
     </div>
   );
 }
