@@ -116,30 +116,11 @@ function layoutGroup(
   nodes.push(parentNode);
 
   if (!options.collapsedNodes[groupId]) {
-    let listY = GROUP_PADDING.top;
-    for (let i = 0; i < listLayouts.length; i++) {
-      const listLayout = listLayouts[i];
-      //console.log('listLayout', node.id, listLayout);
-      const relativeNodes = listLayout.nodes.map((n) => {
-        const matchList = node.children[i].find((childNode) => childNode.id === n.id && n.parentId === node.id);
-        let y = n.position.y;
-        if (matchList) {
-          //console.log('matchList', node, n, '\n',listLayout.height, NODE_HEIGHT);
-          const listCenteredShift = n.measured?.height ? (listLayout.height - n.measured.height) / 2 : 0;
-          y = listY + listCenteredShift;
-        }
-        return {
-          ...n,
-          position: {
-            ...n.position,
-            y,
-          },
-        };
-      });
-      listY += listLayout.height + VERTICAL_GAP;
-      nodes.push(...relativeNodes);
-      edges.push(...listLayout.edges);
-    }
+    //Пушим только здесь, потому что дочерние элементы должны стоять после родительского в списке нод
+    listLayouts.forEach((layout) => {
+      nodes.push(...layout.nodes);
+      edges.push(...layout.edges);
+    });
 
     for (let bIndex = 0; bIndex < node.children.length; bIndex++) {
       const childList = node.children[bIndex];
@@ -264,8 +245,23 @@ function layoutList(
     }
   }
 
+  const yCenteredNodes = nodes.map((node) => {
+    const matchList = nodeList.find((n) => n.id === node.id);
+    if (matchList) {
+      const listCenteredShift = node.measured?.height ? (maxHeight - node.measured.height) / 2 : 0;
+      return {
+        ...node,
+        position: {
+          ...node.position,
+          y: startY + listCenteredShift,
+        },
+      };
+    }
+    return node;
+  });
+
   return {
-    nodes,
+    nodes: yCenteredNodes,
     edges,
     width: currentX,
     height: maxHeight,
