@@ -11,7 +11,7 @@ const GROUP_PADDING = {
   top: 10,
   bottom: 10,
   left: 160,
-  right: 50,
+  right: 30,
 };
 const MIN_GROUP_NODE_HEIGHT = 100;
 
@@ -50,7 +50,6 @@ function layoutGroup(
   index: number,
   { zIndex = 0, ...options }: LayoutOptions
 ): LayoutResult {
-  //console.log('layoutGroup', node.name, startX, startY, parentId, zIndex);
   const nodes: FlowNode[] = [];
   const edges: Edge[] = [];
 
@@ -76,7 +75,6 @@ function layoutGroup(
   }
 
   const totalHeight = currentY - GROUP_PADDING.top - VERTICAL_GAP;
-  console.log('list layouts for', node.name, listLayouts, 'currentY', currentY, 'totalHeight', totalHeight);
 
   const groupHeight = Math.max(totalHeight + GROUP_PADDING.top + GROUP_PADDING.bottom, MIN_GROUP_NODE_HEIGHT);
   const groupWidth = maxListWidth + (!options.collapsedNodes[groupId] && hasChildren ? GROUP_PADDING.left + GROUP_PADDING.right : NODE_WIDTH);
@@ -116,7 +114,6 @@ function layoutGroup(
   nodes.push(parentNode);
 
   if (!options.collapsedNodes[groupId]) {
-    //Пушим только здесь, потому что дочерние элементы должны стоять после родительского в списке нод
     listLayouts.forEach((layout) => {
       nodes.push(...layout.nodes);
       edges.push(...layout.edges);
@@ -153,14 +150,6 @@ function layoutList(
   branchIndex: number | undefined,
   { zIndex = 0, ...options }: LayoutOptions
 ): LayoutResult {
-  // console.log(
-  //   'layoutList',
-  //   nodeList.map((n) => n.name),
-  //   startX,
-  //   startY,
-  //   parentId,
-  //   zIndex
-  // );
   const nodes: FlowNode[] = [];
   const edges: Edge[] = [];
   let currentX = 0;
@@ -226,7 +215,7 @@ function layoutList(
       if (prevNode) {
         let sourceHandle = undefined;
         const targetHandle = 'outer-target';
-        if (isGroupNode(prevNode) && prevNode.children.length > 0) {
+        if (isGroupNode(prevNode)) {
           sourceHandle = 'outer-source';
         }
         edges.push(
@@ -244,6 +233,8 @@ function layoutList(
       maxHeight = Math.max(maxHeight, groupLayout.height);
     }
   }
+
+  currentX -= HORIZONTAL_GAP
 
   const yCenteredNodes = nodes.map((node) => {
     const matchList = nodeList.find((n) => n.id === node.id);

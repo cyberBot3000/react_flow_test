@@ -33,15 +33,6 @@ function App() {
   const [collapsedNodes, setCollapsedNodes] = useState<Record<string, boolean>>({});
   const { nodes: treeNodes, deleteNode, addNode, addEmptyNode } = useNodesModel();
 
-  // useEffect(() => {
-  //   console.log(
-  //     'Nodes state:',
-  //     nodes.map((n) => ({ name: n.data.name, x: n.position.x, y: n.position.y, width: n.measured?.width, height: n.measured?.height })),
-  //     'Edges state:',
-  //     edges
-  //   );
-  // }, [nodes, edges]);
-
   const handleNodeCollapse = useCallback((id: string, isCollapsed: boolean) => {
     setCollapsedNodes((prevCollapsedNodes) => ({
       ...prevCollapsedNodes,
@@ -82,10 +73,11 @@ function App() {
             edgeTypes={edgesTypes}
             panOnScroll
             panOnDrag={[1, 2]}
+            minZoom={0.0001}
           >
             <Background />
-            <Controls />
-            <MiniMap />
+            <Controls fitViewOptions={{minZoom: 0.0001}} />
+            <MiniMap pannable nodeColor="rgba(0,0,0,0.1)"/>
             {/* <NodeInspector /> */}
           </ReactFlow>
         </div>
